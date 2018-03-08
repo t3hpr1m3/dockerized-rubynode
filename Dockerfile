@@ -11,10 +11,10 @@ RUN apk --update add --virtual .build-deps \
     gcc \
     git \
     gnupg \
+    libressl-dev \
     libxml2-dev \
     libxslt-dev \
     linux-headers \
-    openssl-dev \
     python \
     readline-dev \
     tar \
