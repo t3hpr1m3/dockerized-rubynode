@@ -1,6 +1,5 @@
-FROM alpine:3.7
+FROM jdubz/ruby:2.5.0
 
-ENV RUBY_VERSION 2.5.0
 ENV NODE_VERSION 8.9.4
 
 RUN apk --update add --virtual .build-deps \
@@ -19,11 +18,6 @@ RUN apk --update add --virtual .build-deps \
     readline-dev \
     tar \
     xz && \
-  git clone http://github.com/rbenv/ruby-build.git /root/ruby-build && \
-  /root/ruby-build/install.sh && \
-  rm -rf /root/ruby-build && \
-  ruby-build $RUBY_VERSION /usr/local && \
-  gem install bundler && \
   for key in \
       94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
       FD3A5288F042B6850C66B31F09FE44734EB7990E \
@@ -50,7 +44,4 @@ RUN apk --update add --virtual .build-deps \
   cd .. && \
   rm -Rf "node-v$NODE_VERSION" && \
   rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt && \
-  apk del .build-deps && \
-  mkdir -p /usr/src/app
-
-WORKDIR /usr/src/app
+  apk del .build-deps
