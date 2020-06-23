@@ -1,6 +1,5 @@
 FROM jdubz/ruby:2.6.3
 
-ARG MAKE_JOBS=2
 ENV NODE_VERSION 12.18.1
 
 RUN apk --update add --virtual .build-deps \
@@ -15,7 +14,7 @@ RUN apk --update add --virtual .build-deps \
     libxml2-dev \
     libxslt-dev \
     linux-headers \
-    python \
+    python2 \
     readline-dev \
     tar \
     xz && \
