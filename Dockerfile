@@ -1,11 +1,10 @@
-FROM jdubz/ruby:2.6.3
+FROM ruby:2.6.6-alpine
 
 ENV NODE_VERSION 12.18.1
 
 ENV YARN_VERSION 1.22.4
 
 RUN apk --update add --virtual .build-deps \
-    bash \
     build-base \
     curl \
     g++ \
