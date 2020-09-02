@@ -23,8 +23,10 @@ build:
       .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
 
-push:
+push_latest:
   stage: deploy
+  only:
+    - master
   variables:
     GIT_STRATEGY: none
   script:
@@ -33,3 +35,14 @@ push:
     - docker push $CI_REGISTRY_IMAGE:latest
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $DOCKER_REGISTRY/$DOCKER_REGISTRY_IMAGE:latest
     - docker push $DOCKER_REGISTRY/$DOCKER_REGISTRY_IMAGE:latest
+
+push_tag:
+  stage: deploy
+  only:
+    - tags
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $DOCKER_REGISTRY/$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $DOCKER_REGISTRY/$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
