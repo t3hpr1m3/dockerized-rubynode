@@ -1,0 +1,35 @@
+---
+image: docker:19.03.1
+
+services:
+  - docker:19.03.1-dind
+
+before_script:
+  - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+  - echo -n $DOCKER_REGISTRY_PASSWORD | docker login -u $DOCKER_REGISTRY_USER --password-stdin $DOCKER_REGISTRY
+
+variables:
+  DOCKER_BUILDKIT: 1
+
+build:
+  stage: build
+  script:
+    - >
+      docker build
+      --pull
+      --build-arg BUILDKIT_INLINE_CACHE=1
+      --cache-from $CI_REGISTRY_IMAGE:latest
+      --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+      .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+
+push:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $DOCKER_REGISTRY/$DOCKER_REGISTRY_IMAGE:latest
+    - docker push $DOCKER_REGISTRY/$DOCKER_REGISTRY_IMAGE:latest
